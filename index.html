@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#111827">
+<title>AI Resume Studio | Private Resume Tailoring</title>
+<style>
+:root{--bg:#f4f6fb;--panel:#fff;--ink:#172033;--muted:#64748b;--line:#e3e8f1;--blue:#315ee8;--blue2:#2449bf;--green:#16794b;--amber:#9a5b00;--red:#b42318}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,Arial,sans-serif}
+header{background:#111827;color:white;padding:25px max(20px,calc((100% - 1120px)/2));display:flex;justify-content:space-between;align-items:center;gap:20px}
+.brand{font-weight:800;font-size:19px;letter-spacing:-.4px}.brand span{color:#9eb5ff}.sub{color:#cbd5e1;font-size:12px}
+main{max-width:1120px;margin:28px auto;padding:0 18px 60px}.notice{background:#fff8e8;border:1px solid #f1d69c;padding:13px 15px;border-radius:12px;color:#704900;margin-bottom:20px;font-size:13px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}.card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:20px;box-shadow:0 4px 18px #1e293b08;margin-bottom:18px}
+h1{font-size:26px;line-height:1.2;margin:0 0 8px;letter-spacing:-.7px}h2{font-size:17px;margin:0 0 14px}h3{font-size:14px;margin:18px 0 7px}.muted{color:var(--muted)}.small{font-size:12px;color:var(--muted)}
+label{display:block;font-weight:650;font-size:13px;margin:12px 0 6px}input,textarea,select{width:100%;border:1px solid #cfd7e5;border-radius:9px;padding:11px 12px;font:inherit;background:white;color:var(--ink)}textarea{min-height:150px;resize:vertical}input[type=file]{padding:9px}button{border:0;border-radius:9px;padding:11px 15px;font-weight:700;cursor:pointer;background:var(--blue);color:white;font:inherit}button:hover{background:var(--blue2)}button.secondary{background:#edf1fb;color:#233b83}button.secondary:hover{background:#dfe7fb}button.ghost{background:white;color:#334155;border:1px solid var(--line)}button.danger{background:#fff0ef;color:var(--red)}button:disabled{opacity:.5;cursor:not-allowed}.actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:13px}.status{font-size:13px;margin-top:9px}.good{color:var(--green)}.warn{color:var(--amber)}.bad{color:var(--red)}
+.pill{display:inline-block;background:#edf2ff;color:#2947a2;border-radius:99px;padding:4px 9px;font-size:11px;font-weight:750}.metric{font-size:30px;font-weight:800;letter-spacing:-1px}.meter{height:9px;background:#e9edf5;border-radius:99px;overflow:hidden;margin:8px 0 4px}.meter>span{display:block;height:100%;background:var(--blue);width:0}
+.list{padding-left:19px;margin:8px 0}.list li{margin:5px 0}.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}.hidden{display:none!important}.resume-preview{background:white;border:1px solid var(--line);padding:28px;min-height:300px;max-height:650px;overflow:auto;color:#202938;font:13px/1.45 Arial,sans-serif}.resume-preview h1{font:700 22px Arial;text-align:center}.resume-preview h2{font:700 14px Arial;border-bottom:1px solid #777;padding-bottom:3px;margin:15px 0 6px}.resume-preview p{margin:4px 0}.resume-preview ul{margin:4px 0;padding-left:18px}.tag{display:inline-block;padding:5px 8px;background:#eef2f8;border-radius:6px;margin:3px;font-size:12px}.footer{font-size:12px;color:var(--muted);text-align:center;margin-top:20px}
+@media(max-width:760px){.grid,.two{grid-template-columns:1fr}header{align-items:flex-start;flex-direction:column}main{margin-top:18px}.card{padding:16px}}
+@media print{body{background:white}.no-print,header,main>.notice,main>.grid,.footer{display:none!important}#printArea{display:block!important}.resume-preview{border:0;max-height:none;overflow:visible;padding:0}}
+</style>
+</head>
+<body>
+<header><div><div class="brand">AI <span>Resume Studio</span></div><div class="sub">Private, browser-based resume tailoring</div></div><div class="sub">No account · No API key · No subscription</div></header>
+<main>
+<div class="notice"><b>Important:</b> This free version uses local keyword analysis and rule-based rewriting, not a paid AI model. It cannot guarantee an ATS score, interview, or passing every hiring round. Job-site links may block automatic reading; paste the job description when that happens. Your resume stays in this browser unless you export it.</div>
+<div class="grid">
+<section class="card">
+<h2>1. Save your master resume</h2>
+<p class="small">Upload PDF, DOCX, or TXT. DOCX/PDF reading uses free open-source libraries loaded from public CDNs. You can also paste resume text.</p>
+<label for="resumeFile">Choose your resume file</label><input id="resumeFile" type="file" accept=".pdf,.docx,.txt">
+<label for="resumeText">Master resume text</label><textarea id="resumeText" placeholder="Paste the complete text of your current resume here. Include contact details, summary, skills, work history, education, and certifications."></textarea>
+<div class="actions"><button id="saveResume">Save master resume</button><button class="secondary" id="loadResume">Load saved resume</button><button class="ghost" id="clearResume">Clear saved data</button></div>
+<div id="resumeStatus" class="status muted">Nothing saved yet.</div>
+</section>
+<section class="card">
+<h2>2. Add a job description</h2>
+<label for="jobUrl">Job posting URL (optional)</label><input id="jobUrl" type="url" placeholder="https://company.com/careers/job-id">
+<div class="actions"><button class="secondary" id="readUrl">Try to read job URL</button></div>
+<div id="urlStatus" class="status muted">Some career sites prevent browser-based extraction. Manual paste is always available.</div>
+<label for="jobText">Job description text</label><textarea id="jobText" placeholder="Paste the full job description here, including responsibilities, required qualifications, preferred qualifications, and skills."></textarea>
+<div class="actions"><button id="analyze">Analyze and tailor resume</button></div>
+<div id="analysisStatus" class="status muted">Add your resume and the job description to begin.</div>
+</section>
+</div>
+<section id="results" class="hidden">
+<div class="grid">
+<div class="card">
+<h2>3. Match analysis</h2>
+<div class="two"><div><div class="metric" id="matchScore">0%</div><div class="small">Keyword coverage estimate</div></div><div><div class="metric" id="matchedCount">0</div><div class="small">Relevant terms found</div></div></div>
+<div class="meter"><span id="meterFill"></span></div>
+<p class="small">This is a transparent keyword coverage estimate, not the employer's ATS score.</p>
+<h3>Matched keywords</h3><div id="matchedTerms"></div>
+<h3>Potentially missing keywords</h3><div id="missingTerms"></div>
+<h3>Qualifications to review</h3><ul id="qualificationNotes" class="list"></ul>
+</div>
+<div class="card">
+<h2>4. Review before downloading</h2>
+<p class="small">The draft is based only on the text you provided. Check every line for accuracy. Remove anything that does not describe your real experience.</p>
+<label for="resumeTitle">Resume headline (optional)</label><input id="resumeTitle" placeholder="e.g. Customer Service Representative">
+<label for="summaryEdit">Professional summary</label><textarea id="summaryEdit" style="min-height:110px"></textarea>
+<label for="skillsEdit">Relevant skills (comma-separated)</label><textarea id="skillsEdit" style="min-height:85px"></textarea>
+<div class="actions"><button class="secondary" id="rebuild">Update preview</button></div>
+<div id="reviewStatus" class="status muted"></div>
+</div>
+</div>
+<div class="card">
+<div class="actions no-print" style="justify-content:space-between;align-items:center"><div><h2 style="margin:0">Customized resume preview</h2><div class="small">Review the complete document before exporting.</div></div><span class="pill">Approval required</span></div>
+<div id="preview" class="resume-preview" contenteditable="true" aria-label="Editable resume preview"></div>
+<div class="actions no-print"><button id="approvePdf">Approve & print / save PDF</button><button class="secondary" id="downloadDocx">Approve & download DOCX</button><button class="ghost" id="downloadTxt">Download TXT</button></div>
+<div class="small no-print">For PDF: choose “Save as PDF” in your browser's print dialog. DOCX export requires an internet connection to load the free document library.</div>
+</div>
+</section>
+<div class="footer">Your resume is stored in this browser's local storage. Avoid using a shared/public device. This tool does not send your resume to a server.</div>
+</main>
+<div id="printArea" class="hidden"></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script src="https://unpkg.com/mammoth@1.8.0/mammoth.browser.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/docx/8.5.0/docx.umd.js"></script>
+<script>
+const $=id=>document.getElementById(id);
+let originalResume="", tailoredText="", jobKeywords=[], lastAnalysis=null;
+const stop=new Set(("the and for with from that this will your you our are was were have has had a an to of in on at by as or be is it its their they them we who what when where how all any other preferred required qualifications qualification responsibilities responsibility experience years year ability skills skill knowledge working work including including using use must should can may plus").split(" "));
+function setStatus(id,msg,cls="muted"){ $(id).className="status "+cls; $(id).textContent=msg; }
+function normalize(s){return s.toLowerCase().replace(/[^a-z0-9+#./ -]/g," ").replace(/\s+/g," ").trim()}
+function extractTerms(text){
+ const words=normalize(text).split(" "); const counts={};
+ for(let i=0;i<words.length;i++){let w=words[i];if(w.length<3||stop.has(w)||/^\d+$/.test(w))continue;counts[w]=(counts[w]||0)+1;
+  if(i<words.length-1){let phrase=w+" "+words[i+1];if(words[i+1].length>2&&!stop.has(words[i+1]))counts[phrase]=(counts[phrase]||0)+1;}
+ }
+ return Object.entries(counts).filter(([k,v])=>v>=1).sort((a,b)=>(b[1]+(b[0].includes(" ")?2:0))-(a[1]+(a[0].includes(" ")?2:0))).map(x=>x[0]).slice(0,55);
+}
+function safeText(s){return s.replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
+async function readFile(file){
+ const ext=file.name.split(".").pop().toLowerCase();
+ if(ext==="txt") return await file.text();
+ if(ext==="docx"){
+  if(!window.mammoth)throw Error("DOCX reader did not load. Check your internet connection, then paste the resume text instead.");
+  const ab=await file.arrayBuffer();const r=await mammoth.extractRawText({arrayBuffer:ab});return r.value;
+ }
+ if(ext==="pdf"){
+  if(!window.pdfjsLib)throw Error("PDF reader did not load. Check your internet connection, then paste the resume text instead.");
+  pdfjsLib.GlobalWorkerOptions.workerSrc="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+  const pdf=await pdfjsLib.getDocument({data:await file.arrayBuffer()}).promise;let all="";
+  for(let p=1;p<=pdf.numPages;p++){const page=await pdf.getPage(p);const content=await page.getTextContent();all+=content.items.map(x=>x.str).join(" ")+"\\n";}
+  return all;
+ }
+ throw Error("Please upload a PDF, DOCX, or TXT file.");
+}
+$("resumeFile").addEventListener("change",async e=>{const f=e.target.files[0];if(!f)return;try{$("resumeText").value=await readFile(f);setStatus("resumeStatus","Resume text extracted. Review it, then save your master resume.","good");}catch(err){setStatus("resumeStatus",err.message,"bad");}});
+$("saveResume").onclick=()=>{const t=$("resumeText").value.trim();if(!t)return setStatus("resumeStatus","Paste or upload your resume first.","bad");originalResume=t;localStorage.setItem("ars_master_resume",t);setStatus("resumeStatus","Master resume saved in this browser.","good");};
+$("loadResume").onclick=()=>{const t=localStorage.getItem("ars_master_resume");if(!t)return setStatus("resumeStatus","No saved resume found in this browser.","warn");originalResume=t;$("resumeText").value=t;setStatus("resumeStatus","Saved master resume loaded.","good");};
+$("clearResume").onclick=()=>{if(!confirm("Delete the saved master resume and job history from this browser?"))return;localStorage.removeItem("ars_master_resume");originalResume="";$("resumeText").value="";setStatus("resumeStatus","Saved resume cleared.","good");};
+$("readUrl").onclick=async()=>{
+ const url=$("jobUrl").value.trim();if(!url)return setStatus("urlStatus","Paste a job posting URL first.","warn");
+ try{const u=new URL(url);if(!["http:","https:"].includes(u.protocol))throw Error();}catch{return setStatus("urlStatus","Enter a valid http or https URL.","bad");}
+ setStatus("urlStatus","Trying to read the posting. Many employer sites block this request for security reasons…");
+ try{
+  const r=await fetch(url,{method:"GET",mode:"cors"});if(!r.ok)throw Error("The site returned "+r.status);
+  const html=await r.text();const doc=new DOMParser().parseFromString(html,"text/html");
+  doc.querySelectorAll("script,style,nav,footer,header,svg,noscript").forEach(x=>x.remove());
+  let txt=(doc.querySelector("main")||doc.querySelector("article")||doc.body).innerText||"";
+  txt=txt.replace(/\\n{3,}/g,"\\n\\n").trim();
+  if(txt.length<300)throw Error("The page did not expose enough job text.");
+  $("jobText").value=txt;setStatus("urlStatus","Job text extracted. Review it for missing sections before analyzing.","good");
+ }catch(err){setStatus("urlStatus","Automatic extraction was blocked or unavailable ("+err.message+"). Open the job link, copy the full description, and paste it below. This is normal for many career sites.","warn");}
+};
+function section(text,heading){
+ const lines=text.split(/\\n+/).map(x=>x.trim()).filter(Boolean);let idx=lines.findIndex(x=>x.toLowerCase().replace(/[:\\s]/g,"")===heading.toLowerCase().replace(/[:\\s]/g,""));
+ if(idx<0)return "";let out=[];for(let i=idx+1;i<lines.length;i++){if(/^(professional summary|summary|experience|work experience|employment|education|skills|technical skills|certifications|projects)\\s*:??$/i.test(lines[i]))break;out.push(lines[i]);}return out.join(" ");
+}
+function tailor(){
+ const resume=$("resumeText").value.trim(),job=$("jobText").value.trim();
+ if(!resume){setStatus("analysisStatus","Add your master resume first.","bad");return;}
+ if(!job){setStatus("analysisStatus","Add the job description first.","bad");return;}
+ originalResume=resume;localStorage.setItem("ars_master_resume",resume);
+ const terms=extractTerms(job);const norm=normalize(resume);const matched=terms.filter(t=>norm.includes(t));const missing=terms.filter(t=>!norm.includes(t));
+ const score=terms.length?Math.round(matched.length/terms.length*100):0;
+ jobKeywords=terms;lastAnalysis={matched,missing,score,job};
+ $("matchScore").textContent=score+"%";$("matchedCount").textContent=matched.length;$("meterFill").style.width=score+"%";
+ $("matchedTerms").innerHTML=matched.length?matched.map(t=>`<span class="tag">${safeText(t)}</span>`).join(""):"<span class='small'>No exact keyword matches found.</span>";
+ $("missingTerms").innerHTML=missing.slice(0,25).map(t=>`<span class="tag">${safeText(t)}</span>`).join("")||"<span class='small good'>No high-priority terms missing from this keyword list.</span>";
+ const notes=[];
+ if(missing.length)notes.push("Review missing terms and add only those supported by your real experience.");
+ if(/bachelor|degree/i.test(job)&&!/bachelor|degree/i.test(resume))notes.push("The posting mentions a degree. Confirm whether your education meets the stated requirement.");
+ if(/certification|certified|license/i.test(job)&&!/certification|certified|license/i.test(resume))notes.push("The posting mentions a certification or license. Do not claim one unless you hold it.");
+ if(/[0-9]+\\s*\\+?\\s*years?/i.test(job))notes.push("Check the required years of experience against your actual work history.");
+ if(!notes.length)notes.push("Compare every required qualification with your actual background before applying.");
+ $("qualificationNotes").innerHTML=notes.map(x=>"<li>"+safeText(x)+"</li>").join("");
+ const lines=resume.split(/\\n+/).map(x=>x.trim()).filter(Boolean);
+ const name=lines[0]||"Your Name";
+ const contact=lines.slice(1,4).join(" | ");
+ const summary=lines.find(x=>/^(professional summary|summary|objective)/i.test(x))?section(resume,"summary"):"";
+ const summaryDraft=summary||"Candidate with experience and skills relevant to the target position. Review and replace this statement with a factual summary of your background.";
+ $("resumeTitle").value=$("resumeTitle").value||"";
+ $("summaryEdit").value=summaryDraft;
+ $("skillsEdit").value=matched.filter(x=>x.length>2).slice(0,18).join(", ");
+ tailoredText=resume;
+ renderPreview();
+ $("results").classList.remove("hidden");
+ setStatus("analysisStatus","Analysis complete. Review the gaps and edit the draft before approving.","good");
+ $("results").scrollIntoView({behavior:"smooth",block:"start"});
+}
+function renderPreview(){
+ const raw=$("resumeText").value.trim();const lines=raw.split(/\\n+/).map(x=>x.trim()).filter(Boolean);
+ const name=lines[0]||"Your Name";const contact=lines.slice(1,4).join(" | ");
+ const title=$("resumeTitle").value.trim();const summary=$("summaryEdit").value.trim();const skills=$("skillsEdit").value.split(",").map(x=>x.trim()).filter(Boolean);
+ const sections=["Professional Summary","Skills","Experience","Education","Certifications","Projects"];
+ let body=raw.split(/\\n+/);let html=`<h1>${safeText(name)}</h1><p style="text-align:center">${safeText(contact)}</p>${title?`<p style="text-align:center"><b>${safeText(title)}</b></p>`:""}<h2>PROFESSIONAL SUMMARY</h2><p>${safeText(summary)}</p><h2>RELEVANT SKILLS</h2><p>${skills.map(s=>safeText(s)).join(" • ")}</p>`;
+ let current="";
+ for(const line of body){
+  const trimmed=line.trim();if(!trimmed)continue;
+  const heading=sections.find(s=>new RegExp("^"+s.replace(" ","\\\\s+")+"\\\\s*:?$","i").test(trimmed));
+  if(heading){current=heading;html+=`<h2>${safeText(heading.toUpperCase())}</h2>`;continue;}
+  if(/^(professional summary|summary|objective|skills|technical skills)$/i.test(trimmed))continue;
+  if(current==="Experience"||current==="Education"||current==="Certifications"||current==="Projects")html+=`<p>${safeText(trimmed)}</p>`;
+  else if(!current)html+=`<p>${safeText(trimmed)}</p>`;
+ }
+ $("preview").innerHTML=html;
+}
+$("analyze").onclick=tailor;$("rebuild").onclick=()=>{renderPreview();setStatus("reviewStatus","Preview updated. Check the content before exporting.","good");};
+$("approvePdf").onclick=()=>{if(!$("preview").innerText.trim())return alert("Generate a resume first.");if(!confirm("Have you reviewed the resume and confirmed every statement is accurate?"))return;const p=$("preview").innerHTML;$("printArea").innerHTML='<div class="resume-preview">'+p+'</div>';$("printArea").classList.remove("hidden");window.print();setTimeout(()=>$("printArea").classList.add("hidden"),1000);};
+$("downloadTxt").onclick=()=>{const blob=new Blob([$("preview").innerText],{type:"text/plain;charset=utf-8"});downloadBlob(blob,"Customized_Resume.txt");};
+function downloadBlob(blob,name){const a=document.createElement("a");const u=URL.createObjectURL(blob);a.href=u;a.download=name;document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(u);}
+$("downloadDocx").onclick=async()=>{
+ if(!$("preview").innerText.trim())return alert("Generate a resume first.");
+ if(!confirm("Have you reviewed the resume and confirmed every statement is accurate?"))return;
+ if(!window.docx)return alert("The DOCX library could not load. Check your internet connection or use Print / Save PDF.");
+ try{
+ const {Document,Packer,Paragraph,TextRun,HeadingLevel,AlignmentType}=docx;
+ const nodes=[];const root=$("preview");
+ function walk(el){
+  [...el.childNodes].forEach(n=>{
+   if(n.nodeType===3){if(n.textContent.trim())nodes.push(new Paragraph({children:[new TextRun(n.textContent.trim())]}));return;}
+   if(n.nodeType!==1)return;
+   const txt=n.innerText||n.textContent||"";
+   if(n.tagName==="H1")nodes.push(new Paragraph({text:txt,heading:HeadingLevel.TITLE,alignment:AlignmentType.CENTER}));
+   else if(n.tagName==="H2")nodes.push(new Paragraph({text:txt,heading:HeadingLevel.HEADING_2}));
+   else if(n.tagName==="P")nodes.push(new Paragraph({children:[new TextRun(txt)]}));
+   else if(n.tagName==="UL") [...n.children].forEach(li=>nodes.push(new Paragraph({text:li.innerText||li.textContent,bullet:{indent:360}})));
+   else if(n.tagName==="DIV"||n.tagName==="SECTION")walk(n);
+  });
+ }
+ walk(root);const doc=new Document({sections:[{children:nodes}]});const blob=await Packer.toBlob(doc);downloadBlob(blob,"Customized_Resume.docx");
+ }catch(e){alert("Could not create DOCX: "+e.message);}
+};
+(function init(){const saved=localStorage.getItem("ars_master_resume");if(saved){$("resumeText").value=saved;originalResume=saved;setStatus("resumeStatus","A saved master resume is available in this browser.","good");}})();
+</script>
+</body></html>
