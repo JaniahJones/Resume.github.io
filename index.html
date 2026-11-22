@@ -1,0 +1,230 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#111827"><title>AI Resume Studio</title>
+<style>
+:root{--navy:#172b4d;--blue:#234a83;--blue2:#eaf0f8;--ink:#172033;--muted:#64748b;--line:#dce3ed;--bg:#f4f6fa;--white:#fff;--green:#16794b;--amber:#936000;--red:#b42318}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.5 Arial,Helvetica,sans-serif}
+header{background:#111827;color:#fff;padding:19px max(18px,calc((100% - 1160px)/2));display:flex;align-items:center;justify-content:space-between;gap:16px}
+.brand{font-size:20px;font-weight:800;letter-spacing:-.4px}.brand span{color:#a9c2f4}.tagline{font-size:11px;color:#cbd5e1}
+nav{display:flex;gap:8px;max-width:1160px;margin:20px auto 0;padding:0 18px}
+nav button{background:#e7ecf4;color:#24334b;border-radius:9px 9px 0 0;padding:12px 18px}
+nav button.active{background:#fff;color:#17345f}
+main{max-width:1160px;margin:0 auto;padding:0 18px 55px}
+.page{background:#fff;border:1px solid var(--line);border-radius:0 14px 14px 14px;padding:22px;box-shadow:0 5px 22px #172b4d08}
+h1{font-size:25px;margin:0 0 5px;letter-spacing:-.5px}h2{font-size:17px;color:#1e3557;margin:0 0 13px}h3{font-size:14px;margin:17px 0 6px;color:#233d63}
+p{margin:6px 0}.muted,.help{color:var(--muted)}.help{font-size:12px}.notice{padding:12px 14px;border:1px solid #f0d79d;background:#fff8e8;border-radius:10px;color:#704b08;font-size:13px;margin-bottom:17px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:17px}.card{border:1px solid var(--line);border-radius:12px;padding:17px;margin-bottom:16px;background:#fff}
+label{display:block;font-weight:700;font-size:13px;margin:11px 0 5px}
+input,textarea,select{width:100%;padding:10px 11px;border:1px solid #cbd5e1;border-radius:8px;background:#fff;color:var(--ink);font:inherit}
+textarea{min-height:145px;resize:vertical}input[type=file]{padding:8px}
+button{border:0;border-radius:8px;padding:10px 14px;background:#234a83;color:#fff;font-weight:700;font:inherit;cursor:pointer}
+button:hover{background:#173760}button.secondary{background:#eaf0f8;color:#234a83}button.secondary:hover{background:#dce7f5}button.ghost{background:#fff;color:#334155;border:1px solid var(--line)}button.danger{background:#fff0ef;color:#a21c14}
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.status{font-size:12px;margin-top:8px}.good{color:var(--green)}.warn{color:var(--amber)}.bad{color:var(--red)}
+.hidden{display:none!important}.pill{display:inline-block;border-radius:30px;background:#edf2fa;color:#294c7c;padding:4px 9px;font-size:11px;font-weight:700}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:10px}.stat{font-size:28px;font-weight:800;color:#1d3d6b}.meter{height:8px;background:#e8edf4;border-radius:20px;overflow:hidden}.meter span{display:block;height:100%;background:#315f9c;width:0}
+.tag{display:inline-block;background:#edf2f8;border-radius:5px;padding:4px 7px;margin:3px 3px 3px 0;font-size:11px}
+.resume-sheet{background:white;color:#111;padding:25px 28px;border:1px solid #d5dbe4;max-width:900px;margin:0 auto;font:13px/1.28 Arial,Helvetica,sans-serif}
+.resume-sheet .r-name{text-align:center;font-size:25px;font-weight:700;margin:0 0 1px;color:#111}
+.resume-sheet .r-contact{text-align:center;font-size:11px;margin:0 0 11px;color:#111}
+.resume-sheet .r-section{font-size:16px;line-height:1.2;font-weight:700;color:#203e68;border-bottom:1px solid #203e68;padding-bottom:3px;margin:12px 0 4px}
+.resume-sheet .r-summary{margin:3px 0 5px}
+.resume-sheet .r-skill,.resume-sheet .r-bullet{display:flex;gap:9px;margin:2px 0 2px 0}
+.resume-sheet .bullet{width:10px;flex:none}
+.resume-sheet .skill-copy{flex:1}
+.resume-sheet .r-role{font-weight:700;margin:5px 0 2px}
+.resume-sheet .r-line{margin:2px 0}
+.resume-sheet .r-edu{margin:3px 0}
+.resume-sheet b{font-weight:700}
+.job-card{border:1px solid var(--line);border-radius:11px;padding:14px;margin:10px 0;background:#fff}
+.job-card h3{margin:0 0 4px;font-size:15px}.job-meta{font-size:12px;color:#53657c}.job-source{font-size:11px;color:#52657d;margin-top:6px}
+.company-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.company{border:1px solid var(--line);border-radius:10px;padding:12px}.company b{display:block;margin-bottom:3px}
+.small-list{padding-left:18px;margin:6px 0}.small-list li{margin:4px 0}
+footer{text-align:center;color:#738096;font-size:11px;margin:18px 0}
+@media(max-width:760px){header{align-items:flex-start;flex-direction:column}.grid,.two,.company-grid{grid-template-columns:1fr}nav{margin-top:12px}nav button{flex:1;padding:10px 7px;font-size:12px}.page{padding:14px}.resume-sheet{padding:18px 15px}}
+@media print{body{background:#fff}.no-print,header,nav,footer{display:none!important}main{padding:0;margin:0}.page{border:0;padding:0;box-shadow:none}.page:not(#resumePage){display:none!important}#resumePage .screen-only{display:none!important}#resumeOutput{display:block!important}.resume-sheet{border:0;padding:0;max-width:none;margin:0}}
+</style>
+</head>
+<body>
+<header><div><div class="brand">AI <span>Resume Studio</span></div><div class="tagline">Resume tailoring and official-company job search</div></div><div class="tagline">Free · No paid AI API · Browser-based</div></header>
+<nav class="no-print"><button class="active" id="tabResume">Resume Studio</button><button id="tabJobs">Remote Job Finder</button></nav>
+<main>
+<section id="resumePage" class="page">
+<div class="notice screen-only"><b>Free version:</b> Resume analysis is local keyword matching, not a paid AI model or a real employer ATS score. It will not invent experience or guarantee hiring outcomes. Your resume is saved only in this browser.</div>
+<div class="grid screen-only">
+<div class="card">
+<h2>1. Master resume</h2>
+<p class="help">Upload PDF, DOCX, or TXT, or paste your resume text. The generated resume follows the uploaded reference format: centered contact header, navy uppercase section headings with rules, compact single-column content, labeled core skills, bold role headings, and simple bullets.</p>
+<label>Upload resume</label><input id="resumeFile" type="file" accept=".pdf,.docx,.txt">
+<label>Resume text</label><textarea id="resumeText" placeholder="Paste your complete master resume here..."></textarea>
+<div class="actions"><button id="saveResume">Save master resume</button><button class="secondary" id="loadResume">Load saved resume</button><button class="ghost" id="clearResume">Clear saved resume</button></div>
+<div id="resumeStatus" class="status muted">No saved resume detected.</div>
+</div>
+<div class="card">
+<h2>2. Job description</h2>
+<label>Official job posting URL (optional)</label><input id="jobUrl" type="url" placeholder="https://company.com/careers/job">
+<div class="actions"><button class="secondary" id="readUrl">Try to extract job description</button></div><div id="urlStatus" class="status muted">Some company sites block browser extraction. Paste the description below if needed.</div>
+<label>Job description</label><textarea id="jobText" placeholder="Paste the complete job description, including pay, responsibilities, qualifications, and preferred experience..."></textarea>
+<div class="actions"><button id="analyze">Analyze and prepare tailored resume</button></div><div id="analysisStatus" class="status muted">Add your resume and a job description to start.</div>
+</div>
+</div>
+<section id="analysisPanel" class="hidden screen-only">
+<div class="grid">
+<div class="card">
+<h2>3. Job match analysis</h2>
+<div class="two"><div><div class="stat" id="matchScore">0%</div><div class="help">Keyword coverage estimate</div></div><div><div class="stat" id="matchCount">0</div><div class="help">Matched terms</div></div></div><div class="meter"><span id="meterFill"></span></div>
+<p class="help">This is not an employer ATS score. Exact wording alone does not prove qualification.</p>
+<h3>Matched terms</h3><div id="matchedTerms"></div><h3>Potentially missing terms</h3><div id="missingTerms"></div><h3>Qualifications to verify</h3><ul id="qualNotes" class="small-list"></ul>
+</div>
+<div class="card">
+<h2>4. Review and edit</h2>
+<label>Target job title (optional)</label><input id="targetTitle" placeholder="e.g. Remote Customer Service Representative">
+<label>Professional summary</label><textarea id="summaryEdit" style="min-height:110px"></textarea>
+<label>Core skills (one per line; use only truthful skills)</label><textarea id="skillsEdit" style="min-height:125px"></textarea>
+<div class="actions"><button class="secondary" id="refreshPreview">Update formatted preview</button></div><div id="reviewStatus" class="status muted"></div>
+</div>
+</div>
+</section>
+<div class="card">
+<div class="screen-only actions" style="justify-content:space-between;align-items:center"><div><h2 style="margin:0">Formatted resume preview</h2><div class="help">Styled to match the uploaded resume. Review and approve before export.</div></div><span class="pill">Approval required</span></div>
+<div id="resumeOutput" class="resume-sheet" contenteditable="true"><p class="muted">Your formatted resume preview will appear here after you analyze a job description.</p></div>
+<div class="actions screen-only"><button id="approvePdf">Approve & save as PDF</button><button class="secondary" id="downloadDocx">Approve & download DOCX</button><button class="ghost" id="downloadTxt">Download TXT</button></div>
+<p class="help screen-only">PDF: choose “Save as PDF” in the print dialog. DOCX export uses a free open-source library loaded from a CDN.</p>
+</div>
+</section>
+
+<section id="jobsPage" class="page hidden">
+<div class="notice"><b>Official employer sources only.</b> This page does not use Indeed, LinkedIn, ZipRecruiter, or other job aggregators. A static GitHub Pages site cannot reliably crawl every company's private career system. It opens official employer career pages and attempts direct extraction only when the employer permits it. If blocked, use the employer's own search page and paste the posting details into the tracker.</div>
+<h1>Remote Job Finder</h1><p class="muted">Search for U.S.-based, fully remote jobs that match your pay and experience requirements.</p>
+<div class="card">
+<h2>Your search filters</h2>
+<div class="grid">
+<div>
+<label>Job category / keywords</label><input id="jobCategory" value="Customer Service" placeholder="Customer service, support, help desk...">
+<label>Minimum hourly pay (USD)</label><input id="minPay" type="number" min="0" step=".25" value="18">
+<label>Maximum experience required (years)</label><select id="maxExperience"><option value="0">No experience required</option><option value="1">Up to 1 year</option><option value="2" selected>Up to 2 years</option></select>
+</div>
+<div>
+<label>Work arrangement</label><select id="workType"><option value="remote" selected>100% Remote only</option></select>
+<label>Eligible location</label><select id="country"><option value="US" selected>United States only</option></select>
+<label>Employment type</label><select id="employment"><option value="fulltime" selected>Full-time only</option><option value="any">Any employment type</option></select>
+<label>Direct official job posting URL</label><input id="companyUrl" placeholder="https://company.com/careers/job-id"><div class="actions"><button class="secondary" id="readCompanyJob">Try to read this employer posting</button></div><div id="companyReadStatus" class="status muted">Extraction works only when the employer site allows browser access.</div>
+</div>
+</div>
+<div class="actions"><button id="searchCompanies">Find jobs on company websites</button><button class="secondary" id="resetFilters">Reset filters</button></div>
+<div id="jobSearchStatus" class="status muted">Your current filters are prefilled. Start by opening the official employer career sites below.</div>
+</div>
+<div class="card">
+<h2>Official company career sites</h2>
+<p class="help">These are direct employer career pages, not third-party job listings. Use the employer's own filters and verify pay, remote eligibility, experience, and full-time status on each posting.</p>
+<div class="company-grid" id="companySources"></div>
+</div>
+<div class="card">
+<h2>Job posting review and tracker</h2>
+<p class="help">Add a job found on an employer's official website. The tracker checks it against your filters and flags missing or unclear details.</p>
+<div class="grid">
+<div>
+<label>Job title</label><input id="newJobTitle" placeholder="Customer Service Representative">
+<label>Company</label><input id="newJobCompany" placeholder="Company name">
+<label>Direct official job posting URL</label><input id="newJobLink" placeholder="https://company.com/careers/job-id">
+<label>Hourly pay (minimum guaranteed rate)</label><input id="newJobPay" type="number" step=".01" placeholder="18.00">
+</div>
+<div>
+<label>Experience required (years)</label><select id="newJobExp"><option value="0">No experience stated / none required</option><option value="0.5">6 months</option><option value="1">1 year</option><option value="2">2 years</option><option value="3">3 years</option><option value="4">4+ years</option><option value="unknown">Not stated / unclear</option></select>
+<label>Location / work arrangement</label><select id="newJobRemote"><option value="remote">100% remote, U.S.</option><option value="hybrid">Hybrid</option><option value="onsite">On-site</option><option value="unknown">Not confirmed</option></select>
+<label>Employment type</label><select id="newJobType"><option value="fulltime">Full-time</option><option value="parttime">Part-time</option><option value="contract">Contract / temporary</option><option value="unknown">Not stated</option></select>
+<label>Experience / eligibility notes</label><input id="newJobNotes" placeholder="e.g. 1 year preferred; hires Indiana residents">
+</div>
+</div>
+<div class="actions"><button id="addJob">Check and save job</button><button class="secondary" id="exportJobs">Export tracker CSV</button><button class="danger" id="clearJobs">Clear tracker</button></div>
+<div id="jobResults"></div>
+</div>
+</section>
+<footer>AI Resume Studio · Static GitHub Pages application · No paid AI API · No job aggregator feeds</footer>
+</main>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script src="https://unpkg.com/mammoth@1.8.0/mammoth.browser.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/docx/8.5.0/docx.umd.js"></script>
+<script>
+const $=id=>document.getElementById(id);
+const sources=[
+ {name:"TTEC",url:"https://www.ttecjobs.com/en/search_jobs/customer%20service/44028/1",desc:"Customer service and support roles. Use its own keyword and location filters."},
+ {name:"Concentrix",url:"https://jobs.concentrix.com/united-states/",desc:"U.S. career page includes a work-from-home filter."},
+ {name:"TP (Teleperformance)",url:"https://www.tp.com/en-us/careers/",desc:"Official U.S. career portal. Check each posting's eligible states and pay range."},
+ {name:"Progressive",url:"https://careers.progressive.com/",desc:"Official careers site. Search customer service and remote opportunities."},
+ {name:"Foundever",url:"https://jobs.foundever.com/",desc:"Official careers portal. Check country, remote status, pay, and experience on each role."},
+ {name:"UnitedHealth Group",url:"https://careers.unitedhealthgroup.com/",desc:"Official careers portal. Search remote customer service and member services."},
+ {name:"Allstate",url:"https://www.allstate.jobs/",desc:"Official Allstate careers site. Search remote claims and customer service roles."},
+ {name:"CVS Health",url:"https://jobs.cvshealth.com/",desc:"Official CVS Health careers site. Search remote customer service roles."}
+];
+function status(id,msg,cls="muted"){$(id).className="status "+cls;$(id).textContent=msg;}
+function esc(s){return String(s||"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
+function normalize(s){return String(s||"").toLowerCase().replace(/[^a-z0-9+#./ -]/g," ").replace(/\s+/g," ").trim();}
+const stop=new Set("the and for with from that this will your you our are was were have has had a an to of in on at by as or be is it its their they them we who what when where how all any other preferred required responsibilities responsibility qualifications qualification experience years year ability skills skill knowledge working work including using use must should can may".split(" "));
+function terms(text){let w=normalize(text).split(" "),c={};for(let i=0;i<w.length;i++){let x=w[i];if(x.length<3||stop.has(x)||/^\d+$/.test(x))continue;c[x]=(c[x]||0)+1;if(i<w.length-1&&w[i+1].length>2&&!stop.has(w[i+1])){let p=x+" "+w[i+1];c[p]=(c[p]||0)+1;}}return Object.keys(c).sort((a,b)=>(c[b]+(b.includes(" ")?2:0))-(c[a]+(a.includes(" ")?2:0))).slice(0,60);}
+async function extractFile(file){let ext=file.name.split(".").pop().toLowerCase();if(ext==="txt")return await file.text();if(ext==="docx"){if(!window.mammoth)throw Error("DOCX reader failed to load. Paste the resume text instead.");return (await mammoth.extractRawText({arrayBuffer:await file.arrayBuffer()})).value;}if(ext==="pdf"){if(!window.pdfjsLib)throw Error("PDF reader failed to load. Paste the resume text instead.");pdfjsLib.GlobalWorkerOptions.workerSrc="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";let pdf=await pdfjsLib.getDocument({data:await file.arrayBuffer()}).promise,out="";for(let i=1;i<=pdf.numPages;i++){let p=await pdf.getPage(i),c=await p.getTextContent(),rows=[];for(let item of c.items){if(!item.str||!item.str.trim())continue;let y=Math.round(item.transform[5]);let row=rows.find(r=>Math.abs(r.y-y)<=2);if(!row){row={y,items:[]};rows.push(row);}row.items.push({x:item.transform[4],s:item.str});}rows.sort((a,b)=>b.y-a.y);out+=rows.map(r=>r.items.sort((a,b)=>a.x-b.x).map(x=>x.s).join(" ")).join("\n")+"\n";}return out;}throw Error("Use PDF, DOCX, or TXT.");}
+$("resumeFile").onchange=async e=>{let f=e.target.files[0];if(!f)return;try{$("resumeText").value=await extractFile(f);status("resumeStatus","Resume text extracted. Check it and save it.","good");}catch(x){status("resumeStatus",x.message,"bad");}};
+$("saveResume").onclick=()=>{let t=$("resumeText").value.trim();if(!t)return status("resumeStatus","Upload or paste a resume first.","bad");localStorage.setItem("ars_master",t);status("resumeStatus","Master resume saved in this browser.","good");};
+$("loadResume").onclick=()=>{let t=localStorage.getItem("ars_master");if(!t)return status("resumeStatus","No saved resume found.","warn");$("resumeText").value=t;status("resumeStatus","Saved resume loaded.","good");};
+$("clearResume").onclick=()=>{if(confirm("Delete the saved master resume from this browser?")){localStorage.removeItem("ars_master");$("resumeText").value="";status("resumeStatus","Saved resume cleared.","good");}};
+$("readUrl").onclick=async()=>{let url=$("jobUrl").value.trim();try{new URL(url);}catch{return status("urlStatus","Enter a valid job posting URL.","bad");}status("urlStatus","Trying to read the employer page…");try{let r=await fetch(url);if(!r.ok)throw Error("HTTP "+r.status);let h=await r.text(),d=new DOMParser().parseFromString(h,"text/html");d.querySelectorAll("script,style,nav,footer,header,svg,noscript").forEach(x=>x.remove());let t=(d.querySelector("main")||d.querySelector("article")||d.body).innerText;if(!t||t.length<250)throw Error("No usable job text was exposed");$("jobText").value=t;status("urlStatus","Job description extracted. Review it for missing details.","good");}catch(e){status("urlStatus","The employer site blocked automatic reading or did not expose the posting ("+e.message+"). Open the link, copy the job description, and paste it below.","warn");}};
+function splitSections(text){let map={},current="";const aliases={"PROFESSIONAL SUMMARY":"summary","SUMMARY":"summary","CORE SKILLS":"skills","SKILLS":"skills","PROFESSIONAL EXPERIENCE":"experience","WORK EXPERIENCE":"experience","EXPERIENCE":"experience","EDUCATION":"education","PROJECTS":"projects","CERTIFICATIONS":"certifications"};for(let raw of text.split(/\r?\n/)){let s=raw.trim();if(!s)continue;let key=aliases[s.toUpperCase().replace(/:$/,"")];if(key){current=key;map[current]??=[];continue;}if(!current){map.header??=[];map.header.push(s);}else{map[current]??=[];map[current].push(s);}}return map;}
+function cleanBullet(s){return s.replace(/^[•●▪*-]\s*/,"").trim();}
+function parseSkill(s){let t=cleanBullet(s);let m=t.match(/^([^:]{3,65}):\s*(.*)$/);return m?{label:m[1],desc:m[2]}:{label:"",desc:t};}
+function makeResume(){
+ let text=$("resumeText").value.trim();if(!text)return;
+ let m=splitSections(text),header=m.header||[],name=header[0]||"Your Name",contact=header.slice(1).join(" | ");
+ let summary=$("summaryEdit").value.trim()||(m.summary||[]).join(" ");
+ let skills=$("skillsEdit").value.split(/\r?\n|,/).map(x=>x.trim()).filter(Boolean);
+ let exp=m.experience||[],edu=m.education||[],proj=m.projects||[],cert=m.certifications||[];
+ let html=`<div class="r-name">${esc(name)}</div><div class="r-contact">${esc(contact)}</div>`;
+ const sec=(name)=>`<div class="r-section">${name}</div>`;
+ if(summary)html+=sec("PROFESSIONAL SUMMARY")+`<div class="r-summary">${esc(summary)}</div>`;
+ if(skills.length){html+=sec("CORE SKILLS");skills.forEach(s=>{let a=parseSkill(s);html+=`<div class="r-skill"><span class="bullet">•</span><div class="skill-copy">${a.label?`<b>${esc(a.label)}:</b> `:""}${esc(a.desc)}</div></div>`;});}
+ if(exp.length){html+=sec("PROFESSIONAL EXPERIENCE");exp.forEach(s=>{let t=cleanBullet(s);if(/^[•●▪*-]/.test(s)){html+=`<div class="r-bullet"><span class="bullet">•</span><div>${esc(t)}</div></div>`;}else{html+=`<div class="r-role">${esc(t)}</div>`;}});}
+ if(edu.length){html+=sec("EDUCATION");edu.forEach(s=>html+=`<div class="r-edu">${esc(cleanBullet(s))}</div>`);}
+ if(proj.length){html+=sec("PROJECTS");proj.forEach(s=>{let t=cleanBullet(s);let p=t.match(/^([^:|]+(?:\s*\|\s*[^:|]+)?):\s*(.*)$/);html+=`<div class="r-bullet"><span class="bullet">•</span><div>${p?`<b>${esc(p[1])}:</b> ${esc(p[2])}`:esc(t)}</div></div>`;});}
+ if(cert.length){html+=sec("CERTIFICATIONS")+`<div class="r-line">${cert.map(cleanBullet).map(esc).join(" | ")}</div>`;}
+ $("resumeOutput").innerHTML=html;
+}
+function analyze(){let r=$("resumeText").value.trim(),j=$("jobText").value.trim();if(!r)return status("analysisStatus","Add your master resume first.","bad");if(!j)return status("analysisStatus","Add the job description first.","bad");
+ let ts=terms(j),nr=normalize(r),hit=ts.filter(x=>nr.includes(x)),miss=ts.filter(x=>!nr.includes(x));let score=ts.length?Math.round(hit.length/ts.length*100):0;
+ $("matchScore").textContent=score+"%";$("matchCount").textContent=hit.length;$("meterFill").style.width=score+"%";
+ $("matchedTerms").innerHTML=hit.map(x=>`<span class="tag">${esc(x)}</span>`).join("")||"No exact matches found.";
+ $("missingTerms").innerHTML=miss.slice(0,30).map(x=>`<span class="tag">${esc(x)}</span>`).join("")||"No terms missing from this extracted list.";
+ let notes=[];if(miss.length)notes.push("Check missing terms. Add them only if your real experience supports them.");if(/bachelor|degree/i.test(j)&&!/bachelor|degree/i.test(r))notes.push("The posting mentions a degree. Verify the education requirement.");if(/license|certification|certified/i.test(j)&&!/license|certification|certified/i.test(r))notes.push("The posting mentions a license or certification. Do not claim one unless you hold it.");if(/\d+\s*\+?\s*years?/i.test(j))notes.push("Compare the experience requirement with your actual employment history.");if(!notes.length)notes.push("Review every required qualification and make sure each statement is accurate.");
+ $("qualNotes").innerHTML=notes.map(x=>`<li>${esc(x)}</li>`).join("");
+ let m=splitSections(r);$("summaryEdit").value=(m.summary||[]).join(" ");$("skillsEdit").value=(m.skills||[]).map(cleanBullet).join("\n");
+ $("analysisPanel").classList.remove("hidden");makeResume();status("analysisStatus","Analysis complete. Review and edit the formatted resume before approving.","good");}
+$("analyze").onclick=analyze;$("refreshPreview").onclick=()=>{makeResume();status("reviewStatus","Preview updated. Check every detail before export.","good");};
+function approval(){return confirm("Have you reviewed the entire resume and confirmed every statement is accurate?");}
+$("approvePdf").onclick=()=>{if(!$("resumeOutput").innerText.trim())return alert("Create a resume preview first.");if(!approval())return;window.print();};
+$("downloadTxt").onclick=()=>{let b=new Blob([$("resumeOutput").innerText],{type:"text/plain;charset=utf-8"});download(b,"Customized_Resume.txt");};
+function download(blob,name){let a=document.createElement("a"),u=URL.createObjectURL(blob);a.href=u;a.download=name;a.click();URL.revokeObjectURL(u);}
+$("downloadDocx").onclick=async()=>{if(!$("resumeOutput").innerText.trim())return alert("Create a resume preview first.");if(!approval())return;if(!window.docx)return alert("DOCX export library unavailable. Check internet or use Save as PDF.");try{let {Document,Packer,Paragraph,TextRun,HeadingLevel,AlignmentType}=docx,children=[];let root=$("resumeOutput");for(let el of root.children){let t=el.innerText||el.textContent||"";if(el.classList.contains("r-name"))children.push(new Paragraph({text:t,heading:HeadingLevel.TITLE,alignment:AlignmentType.CENTER}));else if(el.classList.contains("r-contact"))children.push(new Paragraph({text:t,alignment:AlignmentType.CENTER}));else if(el.classList.contains("r-section"))children.push(new Paragraph({text:t,heading:HeadingLevel.HEADING_2}));else if(el.classList.contains("r-skill")||el.classList.contains("r-bullet"))children.push(new Paragraph({text:"•  "+t}));else children.push(new Paragraph({text:t}));}let d=new Document({sections:[{children}]});download(await Packer.toBlob(d),"Customized_Resume.docx");}catch(e){alert("DOCX export failed: "+e.message);}};
+(function init(){let t=localStorage.getItem("ars_master");if(t){$("resumeText").value=t;status("resumeStatus","A saved master resume is available in this browser.","good");}})();
+
+// Remote job finder: official career-site directory plus a local tracker.
+// The static site cannot bypass cross-origin restrictions or query every employer ATS.
+$("companySources").innerHTML=sources.map((s,i)=>`<div class="company"><b>${esc(s.name)}</b><div class="help">${esc(s.desc)}</div><div class="actions"><button class="secondary" data-source="${i}">Open official careers</button></div></div>`).join("");
+$("companySources").addEventListener("click",e=>{let b=e.target.closest("[data-source]");if(!b)return;window.open(sources[+b.dataset.source].url,"_blank","noopener");});
+$("searchCompanies").onclick=()=>{let c=$("jobCategory").value.trim()||"customer service";let p=+$("minPay").value||0;let x=$("maxExperience").value;status("jobSearchStatus",`Opening official employer career pages. Search for “${c}”, select U.S. remote/full-time roles, and verify guaranteed pay of at least $${p.toFixed(2)}/hour and experience of ${x==="0"?"none": "0–"+x+" years"}. The website will not label a role as a match until its details are entered and checked.`,"good");window.open("https://www.ttecjobs.com/en/search_jobs/"+encodeURIComponent(c+" remote")+"/44028/1","_blank","noopener");};
+$("resetFilters").onclick=()=>{$("jobCategory").value="Customer Service";$("minPay").value="18";$("maxExperience").value="2";$("workType").value="remote";$("country").value="US";$("employment").value="fulltime";status("jobSearchStatus","Filters reset to your saved starting profile.");};
+function loadJobs(){try{return JSON.parse(localStorage.getItem("ars_jobs")||"[]")}catch{return []}}
+function saveJobs(a){localStorage.setItem("ars_jobs",JSON.stringify(a));renderJobs();}
+function checkJob(j){let reasons=[],min=+$("minPay").value||0,max=+$("maxExperience").value;if(j.pay===null||j.pay===undefined)reasons.push("Pay not verified");else if(j.pay<min)reasons.push("Below minimum pay");if(j.exp==="unknown")reasons.push("Experience unclear");else if(+j.exp>max)reasons.push("Experience exceeds limit");if(j.remote!=="remote")reasons.push("Not confirmed 100% remote in U.S.");if(j.type!=="fulltime"&&$("employment").value==="fulltime")reasons.push("Not full-time");return reasons;}
+function renderJobs(){let arr=loadJobs();$("jobResults").innerHTML=arr.length?arr.map((j,i)=>{let reasons=checkJob(j),ok=!reasons.length;return `<div class="job-card"><h3>${esc(j.title)} · ${esc(j.company)}</h3><div class="job-meta">$${j.pay===null?"Pay not stated":Number(j.pay).toFixed(2)+"/hr"} · ${j.exp==="unknown"?"Experience unclear":j.exp+" years"} · ${esc(j.remote)} · ${esc(j.type)}</div><div class="job-source">${esc(j.notes||"")}</div><div class="status ${ok?"good":"warn"}">${ok?"Matches current filters based on details entered": "Needs review: "+reasons.map(esc).join("; ")}</div><div class="actions"><a href="${esc(j.url)}" target="_blank" rel="noopener">Open employer posting</a><button class="danger" data-remove="${i}">Remove</button></div></div>`}).join(""):"<p class='help'>No jobs saved yet. Add a posting from an official employer career website above.</p>";}
+$("readCompanyJob").onclick=async()=>{let url=$("companyUrl").value.trim();try{let u=new URL(url);if(!["http:","https:"].includes(u.protocol))throw 0;if(!/(careers|jobs|workday|icims|taleo|jobvite|greenhouse|lever)/i.test(u.hostname+u.pathname))throw 1;}catch(e){return status("companyReadStatus",e===1?"Use the direct employer career posting, not a job aggregator.":"Enter a valid official job posting URL.","bad");}status("companyReadStatus","Trying to extract the employer posting…");try{let r=await fetch(url);if(!r.ok)throw Error("HTTP "+r.status);let d=new DOMParser().parseFromString(await r.text(),"text/html");d.querySelectorAll("script,style,nav,footer,header,noscript,svg").forEach(x=>x.remove());let txt=(d.querySelector("main")||d.querySelector("article")||d.body).innerText||"";if(txt.length<250)throw Error("No job details were exposed");let title=d.querySelector("h1")?.innerText||d.title||"";$("newJobTitle").value=title.replace(/\s*[|–-].*$/," ").trim();$("newJobLink").value=url;let pay=txt.match(/\$\s*(\d{2}(?:\.\d{2})?)\s*(?:-|to|–)\s*\$?\s*(\d{2}(?:\.\d{2})?)\s*(?:\/\s*(?:hour|hr)|per hour|hourly)/i)||txt.match(/(?:base wage|pay rate|hourly rate|wage range)[^$]{0,45}\$\s*(\d{2}(?:\.\d{2})?)/i);if(pay)$("newJobPay").value=pay[1];let yrs=txt.match(/(no experience|without experience|\d+(?:\.\d+)?\+?\s*years? of (?:relevant )?experience|at least \d+ years? of experience|\d+\s*months? of experience)/i);if(yrs){let v=yrs[0].toLowerCase();if(v.includes("no experience")||v.includes("without experience"))$("newJobExp").value="0";else{let n=v.match(/\d+(?:\.\d+)?/);if(n)$("newJobExp").value=String(Math.min(4,parseFloat(n[0])/ (v.includes("month")?12:1)));}}if(/100% remote|fully remote|work from home|remote in the united states|remote usa/i.test(txt))$("newJobRemote").value="remote";if(/full.time/i.test(txt))$("newJobType").value="fulltime";status("companyReadStatus","Posting text extracted where possible. Check every filled field against the original company page before saving.","good");}catch(e){status("companyReadStatus","The employer blocked browser extraction or did not expose the posting ("+e.message+"). Open the company link, copy the details, and enter them manually. No third-party source was used.","warn");}};
+$("addJob").onclick=()=>{let title=$("newJobTitle").value.trim(),company=$("newJobCompany").value.trim(),url=$("newJobLink").value.trim(),pay=$("newJobPay").value.trim();if(!title||!company||!url)return status("jobSearchStatus","Enter the title, company, and direct employer posting URL.","bad");try{let u=new URL(url);if(!["http:","https:"].includes(u.protocol))throw 0;if(!/(careers|jobs|workday|icims|taleo|jobvite|greenhouse|lever)/i.test(u.hostname+u.pathname))throw 1;}catch(e){return status("jobSearchStatus",e===1?"Use the direct company career/job posting URL, not an aggregator.":"Enter a valid direct job posting URL.","bad");}
+ let j={title,company,url,pay:pay===""?null:Number(pay),exp:$("newJobExp").value,remote:$("newJobRemote").value,type:$("newJobType").value,notes:$("newJobNotes").value};let arr=loadJobs();arr.unshift(j);saveJobs(arr);status("jobSearchStatus","Job saved. The tracker checked it against your current filters.","good");["newJobTitle","newJobCompany","newJobLink","newJobPay","newJobNotes"].forEach(id=>$(id).value="");};
+$("jobResults").addEventListener("click",e=>{let b=e.target.closest("[data-remove]");if(!b)return;let a=loadJobs();a.splice(+b.dataset.remove,1);saveJobs(a);});
+$("clearJobs").onclick=()=>{if(confirm("Clear all saved job tracker entries?"))saveJobs([]);};
+$("exportJobs").onclick=()=>{let rows=[["Title","Company","Official URL","Hourly pay","Experience years","Remote status","Employment type","Notes"],...loadJobs().map(j=>[j.title,j.company,j.url,j.pay??"",j.exp,j.remote,j.type,j.notes])];let csv=rows.map(r=>r.map(x=>'"'+String(x??"").replace(/"/g,'""')+'"').join(",")).join("\r\n");download(new Blob([csv],{type:"text/csv"}),"Remote_Job_Tracker.csv");};
+renderJobs();
+// Tabs
+function show(tab){let jobs=tab==="jobs";$("resumePage").classList.toggle("hidden",jobs);$("jobsPage").classList.toggle("hidden",!jobs);$("tabResume").classList.toggle("active",!jobs);$("tabJobs").classList.toggle("active",jobs);}
+$("tabResume").onclick=()=>show("resume");$("tabJobs").onclick=()=>show("jobs");
+</script>
+</body></html>
